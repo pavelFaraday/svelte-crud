@@ -24,6 +24,14 @@ var app = (function () {
     function safe_not_equal(a, b) {
         return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
     }
+    let src_url_equal_anchor;
+    function src_url_equal(element_src, url) {
+        if (!src_url_equal_anchor) {
+            src_url_equal_anchor = document.createElement('a');
+        }
+        src_url_equal_anchor.href = url;
+        return element_src === src_url_equal_anchor.href;
+    }
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
     }
@@ -42,6 +50,12 @@ var app = (function () {
     function detach(node) {
         if (node.parentNode) {
             node.parentNode.removeChild(node);
+        }
+    }
+    function destroy_each(iterations, detaching) {
+        for (let i = 0; i < iterations.length; i += 1) {
+            if (iterations[i])
+                iterations[i].d(detaching);
         }
     }
     function element(name) {
@@ -385,6 +399,15 @@ var app = (function () {
         else
             dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
     }
+    function validate_each_argument(arg) {
+        if (typeof arg !== 'string' && !(arg && typeof arg === 'object' && 'length' in arg)) {
+            let msg = '{#each} only iterates over array-like objects.';
+            if (typeof Symbol === 'function' && arg && Symbol.iterator in arg) {
+                msg += ' You can use a spread to convert this iterable into an array.';
+            }
+            throw new Error(msg);
+        }
+    }
     function validate_slots(name, slot, keys) {
         for (const slot_key of Object.keys(slot)) {
             if (!~keys.indexOf(slot_key)) {
@@ -417,22 +440,153 @@ var app = (function () {
     const { console: console_1 } = globals;
     const file = "src/App.svelte";
 
-    function create_fragment(ctx) {
-    	let main;
-    	let div5;
+    function get_each_context(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[0] = list[i];
+    	return child_ctx;
+    }
+
+    // (34:8) {#each products as product}
+    function create_each_block(ctx) {
     	let div4;
-    	let div0;
-    	let t0;
     	let div3;
+    	let div0;
+    	let img;
+    	let img_src_value;
+    	let t0;
     	let div2;
     	let div1;
+    	let h5;
+    	let strong;
+    	let t1_value = /*product*/ ctx[0].name + "";
+    	let t1;
+    	let t2;
+    	let span;
+    	let small;
+    	let t3_value = /*product*/ ctx[0].category + "";
+    	let t3;
+    	let t4;
+    	let p;
+    	let t5_value = /*product*/ ctx[0].decription + "";
+    	let t5;
+    	let t6;
+    	let button0;
+    	let t8;
+    	let button1;
+    	let t10;
+
+    	const block = {
+    		c: function create() {
+    			div4 = element("div");
+    			div3 = element("div");
+    			div0 = element("div");
+    			img = element("img");
+    			t0 = space();
+    			div2 = element("div");
+    			div1 = element("div");
+    			h5 = element("h5");
+    			strong = element("strong");
+    			t1 = text(t1_value);
+    			t2 = space();
+    			span = element("span");
+    			small = element("small");
+    			t3 = text(t3_value);
+    			t4 = space();
+    			p = element("p");
+    			t5 = text(t5_value);
+    			t6 = space();
+    			button0 = element("button");
+    			button0.textContent = "Delete";
+    			t8 = space();
+    			button1 = element("button");
+    			button1.textContent = "Edit";
+    			t10 = space();
+    			if (!src_url_equal(img.src, img_src_value = "images/no_product.png")) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "");
+    			attr_dev(img, "class", "img-fluid p-2");
+    			add_location(img, file, 37, 16, 690);
+    			attr_dev(div0, "class", "col-md-4");
+    			add_location(div0, file, 36, 14, 651);
+    			add_location(strong, file, 42, 20, 896);
+    			add_location(small, file, 46, 22, 1021);
+    			add_location(span, file, 45, 20, 992);
+    			add_location(h5, file, 41, 18, 871);
+    			attr_dev(p, "class", "card-text");
+    			add_location(p, file, 49, 18, 1125);
+    			attr_dev(button0, "class", "btn btn-danger");
+    			add_location(button0, file, 50, 18, 1189);
+    			attr_dev(button1, "class", "btn btn-secondary");
+    			add_location(button1, file, 51, 18, 1254);
+    			attr_dev(div1, "class", "card-body");
+    			add_location(div1, file, 40, 16, 829);
+    			attr_dev(div2, "class", "col-md-8");
+    			add_location(div2, file, 39, 14, 790);
+    			attr_dev(div3, "class", "row");
+    			add_location(div3, file, 35, 12, 619);
+    			attr_dev(div4, "class", "card mt-2");
+    			add_location(div4, file, 34, 10, 583);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div4, anchor);
+    			append_dev(div4, div3);
+    			append_dev(div3, div0);
+    			append_dev(div0, img);
+    			append_dev(div3, t0);
+    			append_dev(div3, div2);
+    			append_dev(div2, div1);
+    			append_dev(div1, h5);
+    			append_dev(h5, strong);
+    			append_dev(strong, t1);
+    			append_dev(h5, t2);
+    			append_dev(h5, span);
+    			append_dev(span, small);
+    			append_dev(small, t3);
+    			append_dev(div1, t4);
+    			append_dev(div1, p);
+    			append_dev(p, t5);
+    			append_dev(div1, t6);
+    			append_dev(div1, button0);
+    			append_dev(div1, t8);
+    			append_dev(div1, button1);
+    			append_dev(div4, t10);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div4);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(34:8) {#each products as product}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment(ctx) {
+    	let main;
+    	let div9;
+    	let div8;
+    	let div0;
+    	let t0;
+    	let div7;
+    	let div6;
+    	let div5;
     	let form;
+    	let div1;
     	let input0;
     	let t1;
+    	let div2;
     	let textarea;
     	let t2;
+    	let div3;
     	let input1;
     	let t3;
+    	let div4;
     	let select;
     	let option0;
     	let option1;
@@ -441,24 +595,40 @@ var app = (function () {
     	let button;
     	let mounted;
     	let dispose;
+    	let each_value = /*products*/ ctx[1];
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    	}
 
     	const block = {
     		c: function create() {
     			main = element("main");
-    			div5 = element("div");
-    			div4 = element("div");
+    			div9 = element("div");
+    			div8 = element("div");
     			div0 = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
     			t0 = space();
-    			div3 = element("div");
-    			div2 = element("div");
-    			div1 = element("div");
+    			div7 = element("div");
+    			div6 = element("div");
+    			div5 = element("div");
     			form = element("form");
+    			div1 = element("div");
     			input0 = element("input");
     			t1 = space();
+    			div2 = element("div");
     			textarea = element("textarea");
     			t2 = space();
+    			div3 = element("div");
     			input1 = element("input");
     			t3 = space();
+    			div4 = element("div");
     			select = element("select");
     			option0 = element("option");
     			option0.textContent = "Laptops";
@@ -470,73 +640,93 @@ var app = (function () {
     			button = element("button");
     			button.textContent = "Save Product";
     			attr_dev(div0, "class", "col-md-6");
-    			add_location(div0, file, 17, 6, 253);
+    			add_location(div0, file, 32, 6, 514);
     			attr_dev(input0, "type", "text");
     			attr_dev(input0, "placeholder", "Product Name");
     			attr_dev(input0, "name", "");
     			attr_dev(input0, "id", "product-name");
     			attr_dev(input0, "class", "form-control");
-    			add_location(input0, file, 24, 14, 485);
+    			add_location(input0, file, 63, 16, 1618);
+    			attr_dev(div1, "class", "form-group");
+    			add_location(div1, file, 62, 14, 1577);
     			attr_dev(textarea, "id", "product-description");
     			attr_dev(textarea, "placeholder", "Product Description");
     			attr_dev(textarea, "rows", "3");
     			attr_dev(textarea, "class", "form-control");
-    			add_location(textarea, file, 32, 14, 728);
+    			add_location(textarea, file, 73, 16, 1937);
+    			attr_dev(div2, "class", "form-group");
+    			add_location(div2, file, 72, 14, 1896);
     			attr_dev(input1, "type", "url");
     			attr_dev(input1, "id", "product-image-url");
     			attr_dev(input1, "placeholder", "https://faztweb.com/");
     			attr_dev(input1, "class", "form-control");
-    			add_location(input1, file, 39, 14, 980);
+    			add_location(input1, file, 82, 16, 2263);
+    			attr_dev(div3, "class", "form-group");
+    			add_location(div3, file, 81, 14, 2222);
     			option0.__value = "laptops";
     			option0.value = option0.__value;
-    			add_location(option0, file, 52, 16, 1372);
+    			add_location(option0, file, 97, 18, 2739);
     			option1.__value = "peripherials";
     			option1.value = option1.__value;
-    			add_location(option1, file, 53, 16, 1429);
+    			add_location(option1, file, 98, 18, 2798);
     			option2.__value = "servers";
     			option2.value = option2.__value;
-    			add_location(option2, file, 54, 16, 1496);
+    			add_location(option2, file, 99, 18, 2867);
     			attr_dev(select, "id", "category");
     			attr_dev(select, "class", "form-control");
-    			if (/*product*/ ctx[0].category === void 0) add_render_callback(() => /*select_change_handler*/ ctx[5].call(select));
-    			add_location(select, file, 47, 14, 1219);
-    			add_location(button, file, 57, 14, 1576);
-    			add_location(form, file, 23, 12, 421);
-    			attr_dev(div1, "class", "card-body");
-    			add_location(div1, file, 22, 10, 385);
-    			attr_dev(div2, "class", "card");
-    			add_location(div2, file, 21, 8, 356);
-    			attr_dev(div3, "class", "col-md-6");
-    			add_location(div3, file, 20, 6, 325);
-    			attr_dev(div4, "class", "row");
-    			add_location(div4, file, 16, 4, 229);
-    			attr_dev(div5, "class", "container");
-    			add_location(div5, file, 15, 2, 201);
-    			add_location(main, file, 14, 0, 192);
+    			if (/*product*/ ctx[0].category === void 0) add_render_callback(() => /*select_change_handler*/ ctx[6].call(select));
+    			add_location(select, file, 92, 16, 2576);
+    			attr_dev(div4, "class", "form-group");
+    			add_location(div4, file, 91, 14, 2535);
+    			attr_dev(button, "class", "btn btn-secondary");
+    			add_location(button, file, 103, 14, 2970);
+    			add_location(form, file, 61, 12, 1513);
+    			attr_dev(div5, "class", "card-body");
+    			add_location(div5, file, 60, 10, 1477);
+    			attr_dev(div6, "class", "card");
+    			add_location(div6, file, 59, 8, 1448);
+    			attr_dev(div7, "class", "col-md-6");
+    			add_location(div7, file, 58, 6, 1417);
+    			attr_dev(div8, "class", "row");
+    			add_location(div8, file, 31, 4, 490);
+    			attr_dev(div9, "class", "container");
+    			add_location(div9, file, 30, 2, 462);
+    			add_location(main, file, 29, 0, 453);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, main, anchor);
-    			append_dev(main, div5);
-    			append_dev(div5, div4);
-    			append_dev(div4, div0);
-    			append_dev(div4, t0);
-    			append_dev(div4, div3);
-    			append_dev(div3, div2);
-    			append_dev(div2, div1);
-    			append_dev(div1, form);
-    			append_dev(form, input0);
+    			append_dev(main, div9);
+    			append_dev(div9, div8);
+    			append_dev(div8, div0);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				if (each_blocks[i]) {
+    					each_blocks[i].m(div0, null);
+    				}
+    			}
+
+    			append_dev(div8, t0);
+    			append_dev(div8, div7);
+    			append_dev(div7, div6);
+    			append_dev(div6, div5);
+    			append_dev(div5, form);
+    			append_dev(form, div1);
+    			append_dev(div1, input0);
     			set_input_value(input0, /*product*/ ctx[0].name);
     			append_dev(form, t1);
-    			append_dev(form, textarea);
+    			append_dev(form, div2);
+    			append_dev(div2, textarea);
     			set_input_value(textarea, /*product*/ ctx[0].decription);
     			append_dev(form, t2);
-    			append_dev(form, input1);
+    			append_dev(form, div3);
+    			append_dev(div3, input1);
     			set_input_value(input1, /*product*/ ctx[0].imageURL);
     			append_dev(form, t3);
-    			append_dev(form, select);
+    			append_dev(form, div4);
+    			append_dev(div4, select);
     			append_dev(select, option0);
     			append_dev(select, option1);
     			append_dev(select, option2);
@@ -546,17 +736,41 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[2]),
-    					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[3]),
-    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[4]),
-    					listen_dev(select, "change", /*select_change_handler*/ ctx[5]),
-    					listen_dev(form, "submit", prevent_default(/*onSubmitHandler*/ ctx[1]), false, true, false, false)
+    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[3]),
+    					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[4]),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[5]),
+    					listen_dev(select, "change", /*select_change_handler*/ ctx[6]),
+    					listen_dev(form, "submit", prevent_default(/*onSubmitHandler*/ ctx[2]), false, true, false, false)
     				];
 
     				mounted = true;
     			}
     		},
     		p: function update(ctx, [dirty]) {
+    			if (dirty & /*products*/ 2) {
+    				each_value = /*products*/ ctx[1];
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(div0, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+
     			if (dirty & /*product*/ 1 && input0.value !== /*product*/ ctx[0].name) {
     				set_input_value(input0, /*product*/ ctx[0].name);
     			}
@@ -577,6 +791,7 @@ var app = (function () {
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
+    			destroy_each(each_blocks, detaching);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -596,6 +811,21 @@ var app = (function () {
     function instance($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
+
+    	let products = [
+    		{
+    			id: 1,
+    			name: "HP Pavilion",
+    			decription: "Laptop for house",
+    			category: "laptop"
+    		},
+    		{
+    			id: 2,
+    			name: "Mouse Razer",
+    			decription: "Gaming Mouse",
+    			category: "peripherials"
+    		}
+    	];
 
     	let product = {
     		id: "",
@@ -635,9 +865,10 @@ var app = (function () {
     		$$invalidate(0, product);
     	}
 
-    	$$self.$capture_state = () => ({ product, onSubmitHandler });
+    	$$self.$capture_state = () => ({ products, product, onSubmitHandler });
 
     	$$self.$inject_state = $$props => {
+    		if ('products' in $$props) $$invalidate(1, products = $$props.products);
     		if ('product' in $$props) $$invalidate(0, product = $$props.product);
     	};
 
@@ -647,6 +878,7 @@ var app = (function () {
 
     	return [
     		product,
+    		products,
     		onSubmitHandler,
     		input0_input_handler,
     		textarea_input_handler,
