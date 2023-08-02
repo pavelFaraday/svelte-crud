@@ -22,6 +22,16 @@
     imageURL: "",
   };
 
+  const cleanProduct = () => {
+    product = {
+      id: "",
+      name: "",
+      decription: "",
+      category: "",
+      imageURL: "",
+    };
+  };
+
   const onSubmitHandler = (e) => {
     const newProduct = {
       id: product.name,
@@ -31,6 +41,7 @@
       imageURL: product.imageURL,
     };
     products = products.concat(newProduct);
+    cleanProduct();
   };
 </script>
 
@@ -42,7 +53,15 @@
           <div class="card mt-2">
             <div class="row">
               <div class="col-md-4">
-                <img src="images/no_product.png" alt="" class="img-fluid p-2" />
+                {#if !product.imageURL}
+                  <img
+                    src="images/no_product.png"
+                    alt=""
+                    class="img-fluid p-2"
+                  />
+                {:else}
+                  <img src={product.imageURL} alt="" class="img-fluid p-2" />
+                {/if}
               </div>
               <div class="col-md-8">
                 <div class="card-body">
